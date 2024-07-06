@@ -1,0 +1,93 @@
+-- Veritabanı oluşturulması
+CREATE DATABASE LojistikYonetimi;
+
+-- Veritabanının kullanılması
+USE LojistikYonetimi;
+
+-- Müşteri tablosu
+CREATE TABLE Musteri (
+    MusteriID INT PRIMARY KEY AUTO_INCREMENT,
+    Ad VARCHAR(100),
+    Soyad VARCHAR(100),
+    Eposta VARCHAR(100),
+    Telefon VARCHAR(15),
+    Adres VARCHAR(255)
+);
+
+-- Ürün tablosu
+CREATE TABLE Urun (
+    UrunID INT PRIMARY KEY AUTO_INCREMENT,
+    UrunAdi VARCHAR(100),
+    Kategori VARCHAR(100),
+    Fiyat DECIMAL(10, 2),
+    StokMiktari INT
+);
+
+-- Sipariş tablosu
+CREATE TABLE Siparis (
+    SiparisID INT PRIMARY KEY AUTO_INCREMENT,
+    MusteriID INT,
+    SiparisTarihi DATE,
+    ToplamTutar DECIMAL(10, 2),
+    FOREIGN KEY (MusteriID) REFERENCES Musteri(MusteriID)
+);
+
+-- Sipariş Detayı tablosu
+CREATE TABLE SiparisDetayi (
+    SiparisDetayID INT PRIMARY KEY AUTO_INCREMENT,
+    SiparisID INT,
+    UrunID INT,
+    Miktar INT,
+    Fiyat DECIMAL(10, 2),
+    FOREIGN KEY (SiparisID) REFERENCES Siparis(SiparisID),
+    FOREIGN KEY (UrunID) REFERENCES Urun(UrunID)
+);
+
+-- Depo tablosu
+CREATE TABLE Depo (
+    DepoID INT PRIMARY KEY AUTO_INCREMENT,
+    DepoAdi VARCHAR(100),
+    DepoAdresi VARCHAR(255)
+);
+
+-- Sevkiyat tablosu
+CREATE TABLE Sevkiyat (
+    SevkiyatID INT PRIMARY KEY AUTO_INCREMENT,
+    SiparisID INT,
+    DepoID INT,
+    SevkiyatTarihi DATE,
+    TahminiTeslimTarihi DATE,
+    Durum VARCHAR(50),
+    FOREIGN KEY (SiparisID) REFERENCES Siparis(SiparisID),
+    FOREIGN KEY (DepoID) REFERENCES Depo(DepoID)
+);
+-- Müşteri verileri ekleme
+INSERT INTO Musteri (Ad, Soyad, Eposta, Telefon, Adres) VALUES 
+('Ahmet', 'Yılmaz', 'ahmet@example.com', '05555555555', 'İstanbul'),
+('Ayşe', 'Kaya', 'ayse@example.com', '05555555556', 'Ankara');
+
+-- Ürün verileri ekleme
+INSERT INTO Urun (UrunAdi, Kategori, Fiyat, StokMiktari) VALUES 
+('Laptop', 'Elektronik', 5000.00, 10),
+('Telefon', 'Elektronik', 3000.00, 20);
+
+-- Sipariş verileri ekleme
+INSERT INTO Siparis (MusteriID, SiparisTarihi, ToplamTutar) VALUES 
+(1, '2023-01-01', 8000.00),
+(2, '2023-01-02', 3000.00);
+
+-- Sipariş Detayı verileri ekleme
+INSERT INTO SiparisDetayi (SiparisID, UrunID, Miktar, Fiyat) VALUES 
+(1, 1, 1, 5000.00),
+(1, 2, 1, 3000.00),
+(2, 2, 1, 3000.00);
+
+-- Depo verileri ekleme
+INSERT INTO Depo (DepoAdi, DepoAdresi) VALUES 
+('Merkez Depo', 'İstanbul'),
+('Ankara Depo', 'Ankara');
+
+-- Sevkiyat verileri ekleme
+INSERT INTO Sevkiyat (SiparisID, DepoID, SevkiyatTarihi, TahminiTeslimTarihi, Durum) VALUES 
+(1, 1, '2023-01-02', '2023-01-05', 'Yolda'),
+(2, 2, '2023-01-03', '2023-01-06', 'Hazırlanıyor');
